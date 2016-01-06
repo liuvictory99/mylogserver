@@ -1,0 +1,14 @@
+<seelog>
+    <outputs formatid="main">
+        <filter levels="debug">
+            <console />
+        </filter>
+        <filter levels="info">
+            <file path="logs/access/info.txt"/>
+        </filter>
+    </outputs>
+
+    <formats>
+        <format id="main" format="%Date/%Time  %Msg%n"/>
+    </formats>
+</seelog>
