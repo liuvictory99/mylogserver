@@ -4,6 +4,9 @@ import(
 	"fmt"
 	"os"
 	"os/signal"
+        "os/exec"
+        "log"
+        "flag"
 	"net"
 	"sync"
 	"log/logutil"
@@ -15,11 +18,30 @@ var service = ":1213"
 var bufs [][]byte 
 var lock sync.Mutex
 
+func godaemon(addr string){
+
+    cmd := exec.Command(os.Args[0], "--addr="+addr)
+    err := cmd.Start()
+    if err != nil {
+        log.Fatal(err)
+    }
+    os.Exit(0)
+}
+
+
 func main (){
 
-    bufs = make([][]byte,0,maxBufPoolSize)
+        bufs = make([][]byte,0,maxBufPoolSize)
+        var service_input string
+        var daemon bool
+        flag.StringVar(&service_input, "addr", service, "[addr:port]")
+        flag.BoolVar(&daemon, "daemon", false, "Is runging daemon?")
+        flag.Parse()
+        if daemon {
+          godaemon(service_input)
+        }
 
-	udpAddr,err := net.ResolveUDPAddr("udp4",service)
+	udpAddr,err := net.ResolveUDPAddr("udp4",service_input)
 	checkError(err)
 	conn, err := net.ListenUDP("udp",udpAddr)
 	checkError(err)
